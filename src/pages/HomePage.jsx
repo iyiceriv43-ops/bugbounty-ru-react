@@ -2,6 +2,7 @@ import { useState, useEffect, useRef } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import Nav from '../components/Nav.jsx'
 import Footer from '../components/Footer.jsx'
+import BootScreen from '../components/BootScreen.jsx'
 import { logoStyle } from '../data/programs.js'
 import { useDocumentTitle } from '../hooks/useDocumentTitle.js'
 import { asset } from '../utils/assets.js'
@@ -105,15 +106,30 @@ export default function HomePage() {
   const secBizChart = useRef(null)
   const secHeroCardP = useRef(null)
   const secHeroCardP2 = useRef(null)
+  const heroVideoRef = useRef(null)
 
-  // ===== model-viewer: lazy load on mobile, only when CTA near viewport =====
+  // ===== Boot screen (mobile, first load only) =====
+  const isBootMobile = (() => {
+    if (typeof window === 'undefined') return false
+    if (sessionStorage.getItem('hp_boot_done')) return false
+    return window.matchMedia('(max-width: 860px)').matches
+  })()
+  const [booting, setBooting] = useState(isBootMobile)
+  const [bootFade, setBootFade] = useState(false)
+  const [bootPct, setBootPct] = useState(0)
+
+  // Per-asset load fractions: 0 → 1
+  const bootVidFrac = useRef(0)
+  const bootMdlFrac = useRef(0)
+  const bootMdlDone = useRef(false)
+
+  // mvReady: on desktop preload early; on boot-mobile start immediately so the model
+  // downloads in parallel; on non-boot mobile stay lazy (wait for scroll).
   const [mvReady, setMvReady] = useState(false)
   useEffect(() => {
-    // On mobile skip auto-load; wait until scene scrolls near viewport (handled below)
-    // On desktop, preload the custom element early for a smoother reveal
     const isMobile = window.matchMedia('(max-width: 860px)').matches
-    if (!isMobile) setMvReady(true)
-  }, [])
+    if (!isMobile || isBootMobile) setMvReady(true)
+  }, [isBootMobile])
 
   useEffect(() => {
     const scene = secRobot.current
@@ -145,6 +161,34 @@ export default function HomePage() {
     document.head.appendChild(s)
     return () => { s.remove() }
   }, [mvReady])
+
+  // ===== Boot: tick progress from refs, then fade out =====
+  useEffect(() => {
+    if (!isBootMobile) return
+
+    let done = false
+    const finish = () => {
+      if (done) return
+      done = true
+      setBootPct(100)
+      setBootFade(true)
+      setTimeout(() => {
+        setBooting(false)
+        sessionStorage.setItem('hp_boot_done', '1')
+      }, 650)
+    }
+
+    const update = () => {
+      const pct = Math.round((bootVidFrac.current + bootMdlFrac.current) / 2 * 100)
+      setBootPct(pct)
+      if (pct >= 100 && !done) finish()
+    }
+
+    const tick = setInterval(update, 100)
+    const fail = setTimeout(finish, 12000)
+
+    return () => { clearInterval(tick); clearTimeout(fail) }
+  }, [isBootMobile])
 
   // ===== Auth gate =====
   const handleAuth = (e) => {
@@ -427,16 +471,27 @@ export default function HomePage() {
 
   const filtered = activeFilter === 'all' ? programs : programs.filter((p) => p.cat === activeFilter)
 
-  return (
-    <>
-      <Nav onBusinessModal={() => setBusinessModal(true)} />
+return (
+      <>
+        {booting && <BootScreen progress={bootPct} fading={bootFade} />}
+        <Nav onBusinessModal={() => setBusinessModal(true)} />
 
       {/* ═══ HERO ═══ */}
       <header className="hero" id="hero">
-        <div className="hero-video-wrap">
-<video className="hero-video" autoPlay muted loop playsInline preload="metadata" poster={asset("/images/hero-poster.jpg")}>
-              <source src={asset("/images/hero.mp4")} type="video/mp4" />
-            </video>
+<div className="hero-video-wrap">
+<video ref={heroVideoRef} className="hero-video" autoPlay muted loop playsInline preload={isBootMobile ? "auto" : "metadata"} poster={asset("/images/hero-poster.jpg")}
+              onProgress={(e) => {
+                if (!isBootMobile) return
+                const v = e.currentTarget
+                if (v.buffered && v.buffered.length && v.duration) {
+                  bootVidFrac.current = Math.min(1, v.buffered.end(v.buffered.length - 1) / v.duration)
+                }
+              }}
+              onCanPlayThrough={() => { if (isBootMobile) { bootVidFrac.current = 1 } }}
+              onLoadedData={(e) => { if (isBootMobile && (!e.currentTarget.duration || !isFinite(e.currentTarget.duration))) { bootVidFrac.current = 1 } }}
+              >
+                <source src={asset("/images/hero.mp4")} type="video/mp4" />
+              </video>
           <div className="hero-overlay"></div>
           <div className="hero-grid"></div>
         </div>
@@ -657,27 +712,35 @@ export default function HomePage() {
           </div>
 <div className="robot-scene reveal" ref={secRobot} aria-label="3D laptop model">
               {mvReady ? (
-                <model-viewer
-                  className="robot-model"
-                  src={asset("/models/laptop.glb")}
-                  alt="3D laptop model"
-                  camera-controls
-                  auto-rotate
-                  auto-rotate-delay="0"
-                  rotation-per-second="24deg"
-                  interaction-prompt="none"
-                  shadow-intensity="0.65"
-                  disable-zoom
-                  exposure="1.05"
-                  environment-image="neutral"
-                  camera-orbit="10deg 80deg 4.5m"
-                  min-camera-orbit="auto 60deg 3.0m"
-                  max-camera-orbit="auto 85deg 6.0m"
-                  field-of-view="30deg"
-                  reveal="auto"
-                  loading="lazy">
-                  <div className="model-loader" slot="poster">Загрузка 3D...</div>
-                </model-viewer>
+<model-viewer
+                    className="robot-model"
+                    src={asset("/models/laptop.glb")}
+                    alt="3D laptop model"
+                    camera-controls
+                    auto-rotate
+                    auto-rotate-delay="0"
+                    rotation-per-second="24deg"
+                    interaction-prompt="none"
+                    shadow-intensity="0.65"
+                    disable-zoom
+                    exposure="1.05"
+                    environment-image="neutral"
+                    camera-orbit="10deg 80deg 4.5m"
+                    min-camera-orbit="auto 60deg 3.0m"
+                    max-camera-orbit="auto 85deg 6.0m"
+                    field-of-view="30deg"
+                    reveal="auto"
+                    loading={isBootMobile ? "eager" : "lazy"}
+                    onProgress={(e) => {
+                      if (!isBootMobile) return
+                      const d = e.detail || {}
+                      if (d.total && d.total > 0 && typeof d.loaded === 'number') {
+                        bootMdlFrac.current = Math.min(1, (d.loaded / d.total) * 0.9)
+                      }
+                    }}
+                    onLoad={() => { if (isBootMobile) { bootMdlFrac.current = 1; bootMdlDone.current = true; setBootPct(Math.round((bootVidFrac.current + 1) / 2 * 100)) } }}>
+                    <div className="model-loader" slot="poster">Загрузка 3D...</div>
+                  </model-viewer>
               ) : (
                 <div className="model-loader" aria-hidden="true">Загрузка 3D…</div>
               )}
