@@ -213,6 +213,10 @@ export default function RegisterPage() {
       setFieldError('password', 'Пароль должен быть не короче 8 символов')
       if (!firstErrorField) firstErrorField = 'password'
       valid = false
+    } else if (!/[a-zA-Zа-яА-Я]/.test(form.password) || !/[!@#$%^&*()_+\-={}\[\]|;:'",.<>?/`~\\]/.test(form.password)) {
+      setFieldError('password', 'Пароль должен содержать буквы и спецзнаки (!@#$%^&* и т.д.)')
+      if (!firstErrorField) firstErrorField = 'password'
+      valid = false
     }
 
     // Password confirm
@@ -312,7 +316,7 @@ export default function RegisterPage() {
               <div className="form-field">
                 <label htmlFor="regPassword">Пароль <span className="req">*</span></label>
                 <div className="password-wrap">
-                  <input type={showPassword ? 'text' : 'password'} id="regPassword" name="password" placeholder="Минимум 8 символов" autoComplete="new-password" value={form.password} onChange={handlePasswordChange}/>
+                  <input type={showPassword ? 'text' : 'password'} id="regPassword" name="password" placeholder="Минимум 8 символов: буквы + спецзнаки" autoComplete="new-password" value={form.password} onChange={handlePasswordChange}/>
                   <button type="button" className="password-toggle" aria-label="Показать пароль" onClick={() => setShowPassword(!showPassword)}>
                     <svg className="pw-icon-show" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
                   </button>
