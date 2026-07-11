@@ -5,6 +5,7 @@ import { useAuth } from '../context/AuthContext.jsx'
 import { getReports, addReport, genReportId, getDashData, addDashReport } from '../data/store.js'
 import '../styles/target.css'
 import { useDocumentTitle } from '../hooks/useDocumentTitle.js'
+import { asset } from '../utils/assets.js'
 
 // ── Severity helpers ──
 const SEVS = ['Critical', 'High', 'Medium', 'Low']
@@ -282,7 +283,7 @@ export default function TargetPage() {
         {/* Sidebar */}
         <aside className={'tgt-sidebar' + (sidebarOpen ? ' open' : '')}>
           <Link to="/dashboard" className="tgt-sidebar-head">
-            <img src="/images/hp-logo-sm.png" alt="HackPark" />
+            <img src={asset("/images/hp-logo-sm.png")} alt="HackPark" />
             <span>HackPark</span>
           </Link>
           <nav className="tgt-nav">
@@ -818,7 +819,7 @@ function Sidebar({ activeSlug, sidebarOpen, displayName, userRank, onLogout }) {
   return (
     <aside className={'tgt-sidebar' + (sidebarOpen ? ' open' : '')}>
       <Link to="/dashboard" className="tgt-sidebar-head">
-        <img src="/images/hp-logo-sm.png" alt="HackPark" />
+        <img src={asset("/images/hp-logo-sm.png")} alt="HackPark" />
         <span>HackPark</span>
       </Link>
       <nav className="tgt-nav">

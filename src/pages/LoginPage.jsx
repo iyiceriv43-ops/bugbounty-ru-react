@@ -4,6 +4,7 @@ import { useAuth } from '../context/AuthContext.jsx'
 import Nav from '../components/Nav.jsx'
 import Footer from '../components/Footer.jsx'
 import { useDocumentTitle } from '../hooks/useDocumentTitle.js'
+import { asset } from '../utils/assets.js'
 
 export default function LoginPage() {
   useDocumentTitle('Вход — HackPark')
@@ -53,7 +54,7 @@ export default function LoginPage() {
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5"/><path d="M12 19l-7-7 7-7"/></svg> На главную
           </Link>
           <div className="auth-logo">
-            <img src="/images/hp-logo-sm.png" alt="HackPark"/>
+            <img src={asset("/images/hp-logo-sm.png")} alt="HackPark"/>
             <span>HackPark</span>
           </div>
           <h1 className="auth-title">Вход в платформу</h1>

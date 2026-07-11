@@ -4,6 +4,7 @@ import Nav from '../components/Nav.jsx'
 import Footer from '../components/Footer.jsx'
 import '../styles/about.css'
 import { useDocumentTitle } from '../hooks/useDocumentTitle.js'
+import { asset } from '../utils/assets.js'
 
 export default function AboutPage() {
   useDocumentTitle('О HackPark — Bug Bounty платформа')
@@ -114,7 +115,7 @@ export default function AboutPage() {
           </div>
           <div className="about-visual reveal">
             <div className="about-photo-frame">
-              <img src="/images/hp-photo-1.png" alt="Коворкинг HackPark в Казани" loading="lazy"/>
+              <img src={asset("/images/hp-photo-1.png")} alt="Коворкинг HackPark в Казани" loading="lazy"/>
             </div>
           </div>
         </div>
@@ -133,7 +134,7 @@ export default function AboutPage() {
           </div>
           <div className="about-visual reveal">
             <div className="about-photo-frame">
-              <img src="/images/hp-photo-2.jpeg" alt="Образовательное мероприятие HackPark" loading="lazy"/>
+              <img src={asset("/images/hp-photo-2.jpeg")} alt="Образовательное мероприятие HackPark" loading="lazy"/>
             </div>
           </div>
         </div>
@@ -175,7 +176,7 @@ export default function AboutPage() {
           </div>
           <div className="about-visual reveal">
             <div className="about-photo-frame">
-              <img src="/images/hp-photo-3.jpeg" alt="Работа над реальными проектами HackPark" loading="lazy"/>
+              <img src={asset("/images/hp-photo-3.jpeg")} alt="Работа над реальными проектами HackPark" loading="lazy"/>
             </div>
           </div>
         </div>
@@ -191,7 +192,7 @@ export default function AboutPage() {
           <h2 className="about-ambassador-title reveal">Мы — официальные амбассадоры IT-Park</h2>
           <p className="about-ambassador-sub reveal">HackPark является официальным амбассадором IT-Park. Наша задача — продвигать технологическое образование и развивать сообщество специалистов по кибербезопасности в Татарстане и по всей России.</p>
           <div className="about-ambassador-photo reveal">
-            <img src="/images/hp-photo-4.png" alt="HackPark — амбассадоры IT-Park" loading="lazy"/>
+            <img src={asset("/images/hp-photo-4.png")} alt="HackPark — амбассадоры IT-Park" loading="lazy"/>
           </div>
         </div>
       </section>

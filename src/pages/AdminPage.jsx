@@ -6,6 +6,7 @@ import { getUsers, saveUsers } from '../context/AuthContext.jsx'
 import { getProfileSettings } from '../data/store.js'
 import '../styles/admin.css'
 import { useDocumentTitle } from '../hooks/useDocumentTitle.js'
+import { asset } from '../utils/assets.js'
 
 // ── Helpers ────────────────────────────────────────
 const CHAT_PREFIX = 'hackpark_report_chat_'
@@ -92,7 +93,7 @@ function LoginScreen({ onLogin }) {
     <div className="adm-login">
       <div className="adm-login-box">
         <div className="adm-login-logo">
-          <img src="/images/hp-logo-sm.png" alt="HackPark" />
+          <img src={asset("/images/hp-logo-sm.png")} alt="HackPark" />
           <span>HackPark</span>
           <span className="adm-tag">ADMIN</span>
         </div>
@@ -128,7 +129,7 @@ function Sidebar({ view, onNav, authed, sidebarOpen, onCloseSidebar, pendingUser
       {sidebarOpen && <div className={'adm-overlay' + (sidebarOpen ? ' open' : '')} onClick={onCloseSidebar} />}
       <aside className={'adm-sidebar' + (sidebarOpen ? ' open' : '')}>
         <Link to="/admin" className="adm-sidebar-head" onClick={onCloseSidebar}>
-          <img src="/images/hp-logo-sm.png" alt="HackPark" />
+          <img src={asset("/images/hp-logo-sm.png")} alt="HackPark" />
           <span>HackPark</span>
           <span className="adm-sidebar-tag">ADMIN</span>
         </Link>

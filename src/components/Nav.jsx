@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
+import { asset } from '../utils/assets.js'
 
 export default function Nav({ scrolled = false, onBusinessModal }) {
   const [isScrolled, setIsScrolled] = useState(scrolled)
@@ -18,7 +19,7 @@ export default function Nav({ scrolled = false, onBusinessModal }) {
       <div className="nav-bg"></div>
       <div className="nav-inner">
         <Link to="/" className="nav-logo">
-          <img src="/images/hp-logo-sm.png" alt="HackPark" className="nav-logo-img"/>
+          <img src={asset("/images/hp-logo-sm.png")} alt="HackPark" className="nav-logo-img"/>
           <span>HackPark</span>
         </Link>
           <div className="nav-links">

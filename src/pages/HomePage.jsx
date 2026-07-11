@@ -4,21 +4,22 @@ import Nav from '../components/Nav.jsx'
 import Footer from '../components/Footer.jsx'
 import { logoStyle } from '../data/programs.js'
 import { useDocumentTitle } from '../hooks/useDocumentTitle.js'
+import { asset } from '../utils/assets.js'
 
 // ===== Target programs data =====
 const programs = [
-  { company:"Сбер", logoImg:"/images/targets/sber.svg", scope:["Web","API","Mobile"], maxBounty:"500 000 ₽", badge:"critical", badgeText:"Critical", researchers:412, reports:289, cat:"web" },
-  { company:"Т-Банк", logoImg:"/images/targets/tbank.svg", scope:["Web","API"], maxBounty:"300 000 ₽", badge:"critical", badgeText:"Critical", researchers:367, reports:201, cat:"web" },
-  { company:"Ozon", logoImg:"/images/targets/ozon.svg", scope:["Web","Mobile","API"], maxBounty:"250 000 ₽", badge:"high", badgeText:"High", researchers:289, reports:178, cat:"web" },
-  { company:"Яндекс", logoImg:"/images/targets/yandex.svg", scope:["Web","API","Infra"], maxBounty:"400 000 ₽", badge:"critical", badgeText:"Critical", researchers:521, reports:342, cat:"api" },
-  { company:"VK", logoImg:"/images/targets/vk.svg", scope:["Web","Mobile"], maxBounty:"200 000 ₽", badge:"high", badgeText:"High", researchers:198, reports:145, cat:"mobile" },
-  { company:"Wildberries", logoImg:"/images/targets/wildberries.svg", scope:["Web","API"], maxBounty:"150 000 ₽", badge:"high", badgeText:"High", researchers:156, reports:98, cat:"web" },
-  { company:"Avito", logoImg:"/images/targets/avito.svg", scope:["Web","Mobile","API"], maxBounty:"180 000 ₽", badge:"high", badgeText:"High", researchers:134, reports:87, cat:"mobile" },
-  { company:"Rambler", logoImg:"/images/targets/rambler.svg", scope:["Web","Infra"], maxBounty:"120 000 ₽", badge:"medium", badgeText:"Medium", researchers:89, reports:62, cat:"infra" },
-  { company:"Тинькофф", logoImg:"/images/targets/tinkoff.svg", scope:["Web","API","Mobile"], maxBounty:"350 000 ₽", badge:"critical", badgeText:"Critical", researchers:298, reports:192, cat:"web" },
-  { company:"Газпром Neo", logoImg:"/images/targets/gazprom-neo.png", scope:["Web","Infra","API"], maxBounty:"280 000 ₽", badge:"high", badgeText:"High", researchers:112, reports:73, cat:"infra" },
-  { company:"BitGet RU", logoImg:"/images/targets/bitget.svg", scope:["API","Smart Contract"], maxBounty:"450 000 ₽", badge:"critical", badgeText:"Critical", researchers:87, reports:54, cat:"blockchain" },
-  { company:"Bybit RU", logoImg:"/images/targets/bybit.png", scope:["API","Web3","Mobile"], maxBounty:"500 000 ₽", badge:"critical", badgeText:"Critical", researchers:76, reports:41, cat:"blockchain" },
+  { company:"Сбер", logoImg: asset("/images/targets/sber.svg"), scope:["Web","API","Mobile"], maxBounty:"500 000 ₽", badge:"critical", badgeText:"Critical", researchers:412, reports:289, cat:"web" },
+  { company:"Т-Банк", logoImg: asset("/images/targets/tbank.svg"), scope:["Web","API"], maxBounty:"300 000 ₽", badge:"critical", badgeText:"Critical", researchers:367, reports:201, cat:"web" },
+  { company:"Ozon", logoImg: asset("/images/targets/ozon.svg"), scope:["Web","Mobile","API"], maxBounty:"250 000 ₽", badge:"high", badgeText:"High", researchers:289, reports:178, cat:"web" },
+  { company:"Яндекс", logoImg: asset("/images/targets/yandex.svg"), scope:["Web","API","Infra"], maxBounty:"400 000 ₽", badge:"critical", badgeText:"Critical", researchers:521, reports:342, cat:"api" },
+  { company:"VK", logoImg: asset("/images/targets/vk.svg"), scope:["Web","Mobile"], maxBounty:"200 000 ₽", badge:"high", badgeText:"High", researchers:198, reports:145, cat:"mobile" },
+  { company:"Wildberries", logoImg: asset("/images/targets/wildberries.svg"), scope:["Web","API"], maxBounty:"150 000 ₽", badge:"high", badgeText:"High", researchers:156, reports:98, cat:"web" },
+  { company:"Avito", logoImg: asset("/images/targets/avito.svg"), scope:["Web","Mobile","API"], maxBounty:"180 000 ₽", badge:"high", badgeText:"High", researchers:134, reports:87, cat:"mobile" },
+  { company:"Rambler", logoImg: asset("/images/targets/rambler.svg"), scope:["Web","Infra"], maxBounty:"120 000 ₽", badge:"medium", badgeText:"Medium", researchers:89, reports:62, cat:"infra" },
+  { company:"Тинькофф", logoImg: asset("/images/targets/tinkoff.svg"), scope:["Web","API","Mobile"], maxBounty:"350 000 ₽", badge:"critical", badgeText:"Critical", researchers:298, reports:192, cat:"web" },
+  { company:"Газпром Neo", logoImg: asset("/images/targets/gazprom-neo.png"), scope:["Web","Infra","API"], maxBounty:"280 000 ₽", badge:"high", badgeText:"High", researchers:112, reports:73, cat:"infra" },
+  { company:"BitGet RU", logoImg: asset("/images/targets/bitget.svg"), scope:["API","Smart Contract"], maxBounty:"450 000 ₽", badge:"critical", badgeText:"Critical", researchers:87, reports:54, cat:"blockchain" },
+  { company:"Bybit RU", logoImg: asset("/images/targets/bybit.png"), scope:["API","Web3","Mobile"], maxBounty:"500 000 ₽", badge:"critical", badgeText:"Critical", researchers:76, reports:41, cat:"blockchain" },
 ]
 
 const filters = [
@@ -403,8 +404,8 @@ export default function HomePage() {
       {/* ═══ HERO ═══ */}
       <header className="hero" id="hero">
         <div className="hero-video-wrap">
-          <video className="hero-video" autoPlay muted loop playsInline poster="/images/hero-poster.jpg">
-            <source src="/images/hero.mp4" type="video/mp4" />
+          <video className="hero-video" autoPlay muted loop playsInline poster={asset("/images/hero-poster.jpg")}>
+            <source src={asset("/images/hero.mp4")} type="video/mp4" />
           </video>
           <div className="hero-overlay"></div>
           <div className="hero-grid"></div>
@@ -586,7 +587,7 @@ export default function HomePage() {
             <a href="#" className="btn btn-primary btn-lg" data-auth="1" onClick={handleAuth}>Участвовать →</a>
           </div>
           <div className="hackpark-visual">
-            <img src="/images/hackpark_transparent.png" alt="HackPark сообщество" />
+            <img src={asset("/images/hackpark_transparent.png")} alt="HackPark сообщество" />
           </div>
         </div>
       </section>
@@ -625,7 +626,7 @@ export default function HomePage() {
           <div className="robot-scene reveal" aria-label="3D laptop model">
             <model-viewer
               className="robot-model"
-              src="/models/laptop.glb"
+              src={asset("/models/laptop.glb")}
               alt="3D laptop model"
               camera-controls
               auto-rotate

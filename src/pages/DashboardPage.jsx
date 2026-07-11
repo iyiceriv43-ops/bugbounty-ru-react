@@ -12,6 +12,7 @@ import { CATEGORIES, categoryIcon, categoryName, categoryColor, categoryDesc, ge
 import CategoryIcon from '../components/CategoryIcon.jsx'
 import ArticleEditor from '../components/ArticleEditor.jsx'
 import { useDocumentTitle } from '../hooks/useDocumentTitle.js'
+import { asset } from '../utils/assets.js'
 
 // ── Ranks ──
 const RANKS = [
@@ -772,7 +773,7 @@ setCommentDrafts(d => ({ ...d, [articleId]: '' }))
       <div className="dash-body">
         {/* ── Sidebar ── */}
         <aside className={'dash-sidebar' + (sidebarOpen ? ' open' : '')}>
-          <div className="dash-sidebar-head"><img src="/images/hp-logo-sm.png" alt="HackPark" /><span>HackPark</span></div>
+          <div className="dash-sidebar-head"><img src={asset("/images/hp-logo-sm.png")} alt="HackPark" /><span>HackPark</span></div>
           <nav className="dash-nav">
             <button className={'dash-nav-item' + (activeView === 'overview' ? ' active' : '')} onClick={() => switchView('overview')}>
               <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" /><circle cx="12" cy="7" r="4" /></svg>
@@ -1217,7 +1218,7 @@ setCommentDrafts(d => ({ ...d, [articleId]: '' }))
           {activeView === 'targets' && (
             <div className="dash-view">
               <div className="dash-targets-banner">
-                <img src="/images/baghun2.png" alt="Bug Bounty Targets" />
+                <img src={asset("/images/baghun2.png")} alt="Bug Bounty Targets" />
               </div>
               <div className="dash-filters">
                 {TARGET_FILTERS.map(f => (
@@ -1393,7 +1394,7 @@ setCommentDrafts(d => ({ ...d, [articleId]: '' }))
                       <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
                       <div className="articles-banner-tooltip">Мы платим деньги за лучшие статьи! Пишите качественные материалы — лучшие авторы получают вознаграждение от платформы HackPark.</div>
                     </div>
-                    <img src="/images/goodstat2.png" alt="Вознаграждения за статьи" className="articles-banner-img" />
+                    <img src={asset("/images/goodstat2.png")} alt="Вознаграждения за статьи" className="articles-banner-img" />
                   </div>
 
                   {/* ── Global article search (overview) ── */}
