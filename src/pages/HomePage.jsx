@@ -207,6 +207,26 @@ const finish = () => {
     return () => { clearInterval(tick); clearTimeout(fail) }
   }, [isBootMobile])
 
+  // ===== Force hero video to play (iOS Safari often ignores autoPlay) =====
+  useEffect(() => {
+    const v = heroVideoRef.current
+    if (!v) return
+    const tryPlay = () => {
+      if (v.paused) {
+        v.play().catch(() => {})
+      }
+    }
+    tryPlay()
+    v.addEventListener('loadeddata', tryPlay)
+    v.addEventListener('canplay', tryPlay)
+    v.addEventListener('canplaythrough', tryPlay)
+    return () => {
+      v.removeEventListener('loadeddata', tryPlay)
+      v.removeEventListener('canplay', tryPlay)
+      v.removeEventListener('canplaythrough', tryPlay)
+    }
+  }, [])
+
   // ===== Auth gate =====
   const handleAuth = (e) => {
     e.preventDefault()
@@ -496,7 +516,7 @@ return (
       {/* ═══ HERO ═══ */}
       <header className="hero" id="hero">
 <div className="hero-video-wrap">
-<video ref={heroVideoRef} className="hero-video" autoPlay muted loop playsInline preload={isBootMobile ? "auto" : "metadata"} poster={asset("/images/hero-poster.jpg")}
+<video ref={heroVideoRef} className="hero-video" autoPlay muted loop playsInline webkit-playsinline="true" x5-playsinline="true" preload={isBootMobile ? "auto" : "metadata"} poster={asset("/images/hero-poster.jpg")}
               onProgress={(e) => {
                 if (!isBootMobile) return
                 const v = e.currentTarget
