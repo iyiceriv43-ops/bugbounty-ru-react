@@ -1,0 +1,14 @@
+/* Quill editor overrides for HackPark dashboard */
+.dash-article-editor .ql-toolbar{
+  border:1px solid var(--line);border-bottom:none;border-radius:10px 10px 0 0;
+  background:var(--bg-1);padding:8px 10px
+}
+.dash-article-editor .ql-container{
+  border:1px solid var(--line);border-radius:0 0 10px 10px;
+  font-family:inherit;font-size:14px;min-height:160px;background:var(--bg-1)
+}
+.dash-article-editor .ql-editor{min-height:160px;color:var(--ink);line-height:1.6}
+.dash-article-editor .ql-editor img{max-width:100%;height:auto;border-radius:10px;margin:8px 0}
+.dash-article-editor .ql-snow .ql-tooltip{z-index:1000}
+.dash-article-editor .ql-toolbar button:hover{color:var(--g1)}
+.dash-article-editor .ql-toolbar .ql-active{color:var(--g1)}

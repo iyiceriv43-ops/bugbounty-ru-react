@@ -1,0 +1,68 @@
+/* ===== About Page ===== */
+.about-hero{position:relative;min-height:70vh;display:flex;align-items:center;justify-content:center;overflow:hidden;background:var(--bg)}
+.about-hero-grid{position:absolute;inset:0;background-image:linear-gradient(rgba(255,255,255,.03) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.03) 1px,transparent 1px);background-size:60px 60px;opacity:.4;mask-image:radial-gradient(ellipse at center,black 30%,transparent 70%);-webkit-mask-image:radial-gradient(ellipse at center,black 30%,transparent 70%)}
+.about-hero::after{content:"";position:absolute;inset:0;background:radial-gradient(ellipse at 50% 100%,rgba(94,92,224,.15),transparent 60%);pointer-events:none}
+.about-hero-content{position:relative;z-index:2;max-width:840px;margin:0 auto;padding:140px 22px 80px;text-align:center}
+.about-hero-badge{display:inline-flex;align-items:center;gap:10px;font-size:13px;color:var(--ink-2);background:var(--bg-card);border:1px solid var(--line);padding:8px 20px;border-radius:980px;margin-bottom:32px;backdrop-filter:blur(10px)}
+.about-hero-badge .pulse{width:8px;height:8px;border-radius:50%;background:var(--green);box-shadow:0 0 8px var(--green);animation:pulse 2s infinite}
+.about-hero-badge .itpark-badge{display:inline-flex;align-items:center;gap:6px;padding:3px 10px;background:rgba(94,92,224,.12);border-radius:980px;color:var(--g1);font-weight:600;font-size:12px;letter-spacing:.02em}
+.about-hero-title{font-family:var(--font-head);font-size:clamp(36px,6vw,72px);font-weight:800;letter-spacing:-.03em;line-height:1.04;margin-bottom:24px}
+.about-hero-sub{font-size:clamp(16px,2vw,20px);color:var(--ink-2);line-height:1.6;max-width:680px;margin:0 auto}
+
+/* Section blocks with alternating layout */
+.about-section{padding:100px 0;position:relative}
+.about-section.alt{background:var(--bg-1)}
+.about-inner{max-width:var(--maxw);margin:0 auto;padding:0 22px;display:grid;grid-template-columns:1fr 1fr;gap:64px;align-items:center}
+.about-inner.reverse .about-text{order:2}
+.about-inner.reverse .about-visual{order:1}
+
+.about-tag{display:inline-block;font-size:13px;font-weight:600;color:var(--g1);letter-spacing:.02em;margin-bottom:14px;text-transform:uppercase}
+.about-heading{font-family:var(--font-head);font-size:clamp(26px,3.5vw,44px);font-weight:800;letter-spacing:-.02em;line-height:1.1;margin-bottom:22px}
+.about-text-body{font-size:clamp(15px,1.8vw,18px);color:var(--ink-2);line-height:1.75}
+.about-text-body strong{color:var(--ink);font-weight:600}
+.about-text-body p{margin-bottom:16px}
+.about-text-body p:last-child{margin-bottom:0}
+
+/* Visual block — photo with frame */
+.about-visual{position:relative}
+.about-photo-frame{position:relative;border-radius:var(--radius-l);overflow:hidden}
+.about-photo-frame img{width:100%;height:auto;display:block;transition:transform .8s var(--ease)}
+.about-photo-frame:hover img{transform:scale(1.03)}
+
+
+/* Stats strip */
+.about-stats{padding:60px 0;background:var(--bg)}
+.about-stats-inner{max-width:var(--maxw);margin:0 auto;padding:0 22px;display:grid;grid-template-columns:repeat(4,1fr);gap:24px}
+.about-stat{text-align:center;padding:32px 16px;background:var(--bg-1);border:1px solid var(--line);border-radius:var(--radius)}
+.about-stat-num{font-family:var(--font-head);font-size:clamp(32px,4vw,48px);font-weight:800;letter-spacing:-.02em;background:linear-gradient(135deg,var(--g1),var(--g2));-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;margin-bottom:8px}
+.about-stat-label{font-size:13px;color:var(--ink-3);text-transform:uppercase;letter-spacing:.06em}
+
+/* IT-Park ambassador section */
+.about-ambassador{padding:120px 0;background:var(--bg-1);position:relative;overflow:hidden}
+.about-ambassador::before{content:"";position:absolute;inset:0;background:radial-gradient(ellipse at 50% 50%,rgba(94,92,224,.08),transparent 60%);pointer-events:none}
+.about-ambassador-inner{position:relative;z-index:1;max-width:var(--maxw);margin:0 auto;padding:0 22px;text-align:center}
+.about-ambassador-badge{display:inline-flex;align-items:center;gap:10px;font-size:14px;font-weight:600;color:var(--g1);letter-spacing:.02em;margin-bottom:20px;padding:8px 20px;background:rgba(94,92,224,.08);border:1px solid rgba(94,92,224,.2);border-radius:980px}
+.about-ambassador-title{font-family:var(--font-head);font-size:clamp(30px,4vw,52px);font-weight:800;letter-spacing:-.02em;line-height:1.1;margin-bottom:20px}
+.about-ambassador-sub{font-size:clamp(15px,1.8vw,19px);color:var(--ink-2);line-height:1.65;max-width:680px;margin:0 auto 48px}
+.about-ambassador-photo{max-width:420px;margin:0 auto;border-radius:var(--radius-l);overflow:hidden;position:relative}
+.about-ambassador-photo img{width:100%;height:auto;display:block;border-radius:var(--radius-l)}
+
+
+/* CTA at bottom */
+.about-cta{padding:100px 0;background:var(--bg);text-align:center}
+.about-cta-inner{max-width:680px;margin:0 auto;padding:0 22px}
+.about-cta h2{font-family:var(--font-head);font-size:clamp(28px,4vw,48px);font-weight:800;letter-spacing:-.02em;line-height:1.1;margin-bottom:20px}
+.about-cta p{font-size:18px;color:var(--ink-2);margin-bottom:40px}
+.about-cta-actions{display:flex;gap:14px;justify-content:center;flex-wrap:wrap}
+
+/* Responsive */
+@media(max-width:860px){
+  .about-inner{grid-template-columns:1fr;gap:40px}
+  .about-inner.reverse .about-text{order:1}
+  .about-inner.reverse .about-visual{order:2}
+  .about-stats-inner{grid-template-columns:repeat(2,1fr)}
+  .about-hero-content{padding-top:120px}
+  .nav-links,.nav-actions{display:none}
+  .nav-menu-btn{display:flex}
+  .mobile-menu{display:flex}
+}
