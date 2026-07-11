@@ -114,14 +114,16 @@ export default function HomePage() {
     if (sessionStorage.getItem('hp_boot_done')) return false
     return window.matchMedia('(max-width: 860px)').matches
   })()
-  const [booting, setBooting] = useState(isBootMobile)
-  const [bootFade, setBootFade] = useState(false)
-  const [bootPct, setBootPct] = useState(0)
+const [booting, setBooting] = useState(isBootMobile)
+    const [bootFade, setBootFade] = useState(false)
+    const [bootPct, setBootPct] = useState(0)
 
-  // Per-asset load fractions: 0 → 1
-  const bootVidFrac = useRef(0)
-  const bootMdlFrac = useRef(0)
-  const bootMdlDone = useRef(false)
+    // Per-asset load fractions: 0 → 1
+    const bootVidFrac = useRef(0)
+    const bootMdlFrac = useRef(0)
+    const bootMdlDone = useRef(false)
+    // Smooth displayed progress that eases toward the real target without jumps.
+    const bootDisp = useRef(0)
 
   // mvReady: on desktop preload early; on boot-mobile start immediately so the model
   // downloads in parallel; on non-boot mobile stay lazy (wait for scroll).
@@ -167,25 +169,40 @@ export default function HomePage() {
     if (!isBootMobile) return
 
     let done = false
-    const finish = () => {
-      if (done) return
-      done = true
-      setBootPct(100)
-      setBootFade(true)
-      setTimeout(() => {
-        setBooting(false)
-        sessionStorage.setItem('hp_boot_done', '1')
-      }, 650)
-    }
+const finish = () => {
+        if (done) return
+        done = true
+        bootDisp.current = 100
+        setBootPct(100)
+        setBootFade(true)
+        setTimeout(() => {
+          setBooting(false)
+          sessionStorage.setItem('hp_boot_done', '1')
+        }, 650)
+      }
 
-    const update = () => {
-      const pct = Math.round((bootVidFrac.current + bootMdlFrac.current) / 2 * 100)
-      setBootPct(pct)
-      if (pct >= 100 && !done) finish()
-    }
+      // Target progress from real resource refs, capped at 90 until fully ready.
+      const realReady = () => bootVidFrac.current >= 1 && bootMdlFrac.current >= 1
 
-    const tick = setInterval(update, 100)
-    const fail = setTimeout(finish, 12000)
+      const update = () => {
+        let target
+        if (realReady()) {
+          target = 100
+        } else {
+          const real = (bootVidFrac.current + bootMdlFrac.current) / 2 * 90
+          // Ease displayed value toward real target (never exceeds real + small creep)
+          // so the bar visibly creeps forward even when progress events are sparse.
+          bootDisp.current += (real - bootDisp.current) * 0.18 + 0.4
+          if (bootDisp.current > 90) bootDisp.current = 90
+          target = bootDisp.current
+        }
+        const rounded = Math.round(target)
+        setBootPct(rounded)
+        if (realReady() && !done) finish()
+      }
+
+      const tick = setInterval(update, 80)
+      const fail = setTimeout(finish, 12000)
 
     return () => { clearInterval(tick); clearTimeout(fail) }
   }, [isBootMobile])

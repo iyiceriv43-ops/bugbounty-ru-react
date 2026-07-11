@@ -1,5 +1,6 @@
 import { Routes, Route, Navigate } from 'react-router-dom'
 import { AuthProvider } from './context/AuthContext.jsx'
+import ScrollToTop from './components/ScrollToTop.jsx'
 import HomePage from './pages/HomePage.jsx'
 import AboutPage from './pages/AboutPage.jsx'
 import TargetPage from './pages/TargetPage.jsx'
@@ -24,8 +25,9 @@ export function AdminRoute({ children }) {
 
 function App() {
   return (
-    <AuthProvider>
-      <Routes>
+<AuthProvider>
+        <ScrollToTop />
+        <Routes>
         <Route path="/" element={<HomePage />} />
         <Route path="/about" element={<AboutPage />} />
         <Route path="/target/:slug" element={<TargetPage />} />
