@@ -101,13 +101,42 @@ export default function HomePage() {
   const [counted, setCounted] = useState(stats.map(() => false))
 
   // ===== Refs =====
-  const secNav = useRef(null)
+  const secRobot = useRef(null)
   const secBizChart = useRef(null)
   const secHeroCardP = useRef(null)
   const secHeroCardP2 = useRef(null)
 
-  // ===== model-viewer loader =====
+  // ===== model-viewer: lazy load on mobile, only when CTA near viewport =====
+  const [mvReady, setMvReady] = useState(false)
   useEffect(() => {
+    // On mobile skip auto-load; wait until scene scrolls near viewport (handled below)
+    // On desktop, preload the custom element early for a smoother reveal
+    const isMobile = window.matchMedia('(max-width: 860px)').matches
+    if (!isMobile) setMvReady(true)
+  }, [])
+
+  useEffect(() => {
+    const scene = secRobot.current
+    if (!scene) return
+    // Once the CTA scene is near viewport, inject model-viewer element + script
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            setMvReady(true)
+            observer.disconnect()
+          }
+        })
+      },
+      { rootMargin: '200px 0px' }
+    )
+    observer.observe(scene)
+    return () => observer.disconnect()
+  }, [])
+
+  // Inject model-viewer custom element script when needed
+  useEffect(() => {
+    if (!mvReady) return
     if (typeof customElements !== 'undefined' && customElements.get('model-viewer')) return
     const s = document.createElement('script')
     s.type = 'module'
@@ -115,7 +144,7 @@ export default function HomePage() {
     s.textContent = `import { ModelViewerElement } from '${base}vendor/model-viewer.min.js'; ModelViewerElement.meshoptDecoderLocation = '${base}vendor/meshopt_decoder.js'; if (!customElements.get('model-viewer')) customElements.define('model-viewer', ModelViewerElement);`
     document.head.appendChild(s)
     return () => { s.remove() }
-  }, [])
+  }, [mvReady])
 
   // ===== Auth gate =====
   const handleAuth = (e) => {
@@ -405,9 +434,9 @@ export default function HomePage() {
       {/* ═══ HERO ═══ */}
       <header className="hero" id="hero">
         <div className="hero-video-wrap">
-          <video className="hero-video" autoPlay muted loop playsInline poster={asset("/images/hero-poster.jpg")}>
-            <source src={asset("/images/hero.mp4")} type="video/mp4" />
-          </video>
+<video className="hero-video" autoPlay muted loop playsInline preload="metadata" poster={asset("/images/hero-poster.jpg")}>
+              <source src={asset("/images/hero.mp4")} type="video/mp4" />
+            </video>
           <div className="hero-overlay"></div>
           <div className="hero-grid"></div>
         </div>
@@ -624,29 +653,33 @@ export default function HomePage() {
               <a href="#" className="btn btn-accent btn-lg" onClick={(e) => { e.preventDefault(); setBusinessModal(true) }}>Добавить бизнес</a>
             </div>
           </div>
-          <div className="robot-scene reveal" aria-label="3D laptop model">
-            <model-viewer
-              className="robot-model"
-              src={asset("/models/laptop.glb")}
-              alt="3D laptop model"
-              camera-controls
-              auto-rotate
-              auto-rotate-delay="0"
-              rotation-per-second="24deg"
-              interaction-prompt="none"
-              shadow-intensity="0.65"
-              disable-zoom
-              exposure="1.05"
-              environment-image="neutral"
-              camera-orbit="10deg 80deg 4.5m"
-              min-camera-orbit="auto 60deg 3.0m"
-              max-camera-orbit="auto 85deg 6.0m"
-              field-of-view="30deg"
-              reveal="auto"
-              loading="eager">
-              <div className="model-loader" slot="poster">Загрузка 3D...</div>
-            </model-viewer>
-          </div>
+<div className="robot-scene reveal" ref={secRobot} aria-label="3D laptop model">
+              {mvReady ? (
+                <model-viewer
+                  className="robot-model"
+                  src={asset("/models/laptop.glb")}
+                  alt="3D laptop model"
+                  camera-controls
+                  auto-rotate
+                  auto-rotate-delay="0"
+                  rotation-per-second="24deg"
+                  interaction-prompt="none"
+                  shadow-intensity="0.65"
+                  disable-zoom
+                  exposure="1.05"
+                  environment-image="neutral"
+                  camera-orbit="10deg 80deg 4.5m"
+                  min-camera-orbit="auto 60deg 3.0m"
+                  max-camera-orbit="auto 85deg 6.0m"
+                  field-of-view="30deg"
+                  reveal="auto"
+                  loading="lazy">
+                  <div className="model-loader" slot="poster">Загрузка 3D...</div>
+                </model-viewer>
+              ) : (
+                <div className="model-loader" aria-hidden="true">Загрузка 3D…</div>
+              )}
+            </div>
         </div>
       </section>
 
