@@ -8,6 +8,7 @@ import { useAuth } from '../context/AuthContext.jsx'
 import '../styles/articles.css'
 import '../styles/quill-override.css'
 import { useDocumentTitle } from '../hooks/useDocumentTitle.js'
+import AdminName from '../components/AdminName.jsx'
 
 const fmtDate = (iso) => {
   const d = new Date(iso)
@@ -148,7 +149,7 @@ export default function UserProfilePage() {
                   : initial}
               </div>
               <div className="up-profile-info">
-                <h2>{displayName}</h2>
+                <h2><AdminName name={displayName} role={profileUser?.role} /></h2>
                 <div className="up-profile-meta">
                   {profileUser.role === 'admin' && <span className="up-status-badge admin-shield">⚙ Администратор</span>}
                   {isApproved
@@ -234,7 +235,7 @@ export default function UserProfilePage() {
                     <div className="dash-article-card-head">
                       <div className="dash-article-avatar">{(a.author || '?').charAt(0).toUpperCase()}</div>
                       <div className="dash-article-meta">
-                        <div className="dash-article-author">{a.author}</div>
+                        <div className="dash-article-author"><AdminName name={a.author} authKey={a.authorKey} /></div>
                         <div className="dash-article-date">{fmtDate(a.createdAt)}</div>
                       </div>
                     </div>
@@ -266,7 +267,7 @@ export default function UserProfilePage() {
                             <div className="dash-article-comment-avatar">{(c.author || '?').charAt(0).toUpperCase()}</div>
                             <div className="dash-article-comment-body">
                               <div className="dash-article-comment-head">
-                                <span className="dash-article-comment-author"><Link to={"/profile/" + (c.authorKey || "me")} style={{color:"inherit",textDecoration:"none"}}>{c.author}</Link></span>
+                                <span className="dash-article-comment-author"><Link to={"/profile/" + (c.authorKey || "me")} style={{color:"inherit",textDecoration:"none"}}><AdminName name={c.author} authKey={c.authorKey} /></Link></span>
                                 <span className="dash-article-comment-date">{fmtDate(c.createdAt)}</span>
                               </div>
                               <div className="dash-article-comment-text">{c.text}</div>

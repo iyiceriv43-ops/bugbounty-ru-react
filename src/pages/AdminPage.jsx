@@ -7,6 +7,7 @@ import { getProfileSettings } from '../data/store.js'
 import '../styles/admin.css'
 import { useDocumentTitle } from '../hooks/useDocumentTitle.js'
 import { asset } from '../utils/assets.js'
+import AdminName from '../components/AdminName.jsx'
 
 // ── Helpers ────────────────────────────────────────
 const CHAT_PREFIX = 'hackpark_report_chat_'
@@ -1078,7 +1079,7 @@ function UsersView({ onToast }) {
                 {(() => { try { const ps = getProfileSettings(u.authKey); if (ps.avatar) return <img src={ps.avatar} alt={u.name} style={{ width: '100%', height: '100%', objectFit: 'cover' }} /> } catch {} return initial })()}
               </div>
               <div className="adm-prog-main">
-                <div className="adm-prog-name"><Link to={"/profile/" + u.authKey} state={{ from: "admin" }} style={{color:"inherit",textDecoration:"none"}} onClick={e=>e.stopPropagation()}>{u.name}</Link></div>
+                <div className="adm-prog-name"><Link to={"/profile/" + u.authKey} state={{ from: "admin" }} style={{color:"inherit",textDecoration:"none"}} onClick={e=>e.stopPropagation()}><AdminName name={u.name} role={u.role} /></Link></div>
                 <div className="adm-prog-meta">{u.email} · @{u.telegram} · рег. {date}</div>
                 {u.authKey && <div style={{ fontFamily: 'var(--font-mono)', fontSize: 12, color: 'var(--g1)', marginTop: 4 }}>{u.authKey}</div>}
                 {rewardVal > 0 && <div style={{ marginTop: 6, fontSize: 13, color: 'var(--accent3)' }}>★ Награда: {rewardVal.toLocaleString('ru-RU')} ₽</div>}

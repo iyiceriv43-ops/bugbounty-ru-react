@@ -13,6 +13,7 @@ import CategoryIcon from '../components/CategoryIcon.jsx'
 import ArticleEditor from '../components/ArticleEditor.jsx'
 import { useDocumentTitle } from '../hooks/useDocumentTitle.js'
 import { asset } from '../utils/assets.js'
+import AdminName from '../components/AdminName.jsx'
 
 // ── Ranks ──
 const RANKS = [
@@ -533,6 +534,7 @@ setCommentDrafts(d => ({ ...d, [articleId]: '' }))
       telegram: u.telegram || '',
       avatar: getProfileSettings(u.authKey).avatar || null,
       online,
+      role: u.role || 'user',
     }
   }).filter(u => !userSearch.trim() || u.name.toLowerCase().includes(userSearch.trim().toLowerCase()))
 
@@ -1143,7 +1145,7 @@ setCommentDrafts(d => ({ ...d, [articleId]: '' }))
                             <div className="dash-article-card-head">
                               <div className="dash-article-avatar">{(a.author || '?').charAt(0).toUpperCase()}</div>
                               <div className="dash-article-meta">
-                                <div className="dash-article-author"><Link to={"/profile/" + a.authorKey} style={{color:"inherit",textDecoration:"none"}} onClick={e=>e.stopPropagation()}>{a.author}</Link> {isMine && <span className="dash-article-mine">вы</span>}</div>
+                                <div className="dash-article-author"><Link to={"/profile/" + a.authorKey} style={{color:"inherit",textDecoration:"none"}} onClick={e=>e.stopPropagation()}><AdminName name={a.author} authKey={a.authorKey} /></Link> {isMine && <span className="dash-article-mine">вы</span>}</div>
                                 <div className="dash-article-date">{fmtArticleDate(a.createdAt)}</div>
                               </div>
                               {isMine && (
@@ -1185,7 +1187,7 @@ setCommentDrafts(d => ({ ...d, [articleId]: '' }))
                                     <div className="dash-article-comment-avatar">{(c.author || '?').charAt(0).toUpperCase()}</div>
                                     <div className="dash-article-comment-body">
                                       <div className="dash-article-comment-head">
-                                        <span className="dash-article-comment-author"><Link to={"/profile/" + (c.authorKey || "me")} style={{color:"inherit",textDecoration:"none"}}>{c.author}</Link></span>
+                                        <span className="dash-article-comment-author"><Link to={"/profile/" + (c.authorKey || "me")} style={{color:"inherit",textDecoration:"none"}}><AdminName name={c.author} authKey={c.authorKey} /></Link></span>
                                         <span className="dash-article-comment-date">{fmtArticleDate(c.createdAt)}</span>
                                       </div>
                                       <div className="dash-article-comment-text">{c.text}</div>
@@ -1493,7 +1495,7 @@ setCommentDrafts(d => ({ ...d, [articleId]: '' }))
                               <div className="dash-article-card-head">
                                 <div className="dash-article-avatar">{(a.author || '?').charAt(0).toUpperCase()}</div>
                                 <div className="dash-article-meta">
-                                  <div className="dash-article-author"><Link to={"/profile/" + a.authorKey} style={{color:"inherit",textDecoration:"none"}} onClick={e=>e.stopPropagation()}>{a.author}</Link> {isMine && <span className="dash-article-mine">вы</span>}</div>
+                                  <div className="dash-article-author"><Link to={"/profile/" + a.authorKey} style={{color:"inherit",textDecoration:"none"}} onClick={e=>e.stopPropagation()}><AdminName name={a.author} authKey={a.authorKey} /></Link> {isMine && <span className="dash-article-mine">вы</span>}</div>
                                   <div className="dash-article-date">{fmtArticleDate(a.createdAt)}</div>
                                 </div>
                                 {a.category && <span className="dash-article-cat-badge"><CategoryIcon name={categoryIcon(normalizeCategory(a.category))} size={12} /> {categoryName(normalizeCategory(a.category))}</span>}
@@ -1535,7 +1537,7 @@ setCommentDrafts(d => ({ ...d, [articleId]: '' }))
                                     <div key={ci} className="dash-article-comment">
                                       <div className="dash-article-comment-avatar">{(c.author || '?').charAt(0).toUpperCase()}</div>
                                       <div className="dash-article-comment-body">
-                                        <div className="dash-article-comment-author">{c.author}</div>
+                                        <div className="dash-article-comment-author"><AdminName name={c.author} authKey={c.authorKey} /></div>
                                         <div className="dash-article-comment-text">{c.text}</div>
                                       </div>
                                     </div>
@@ -1666,7 +1668,7 @@ setCommentDrafts(d => ({ ...d, [articleId]: '' }))
                               <div className="dash-article-card-head">
                                 <div className="dash-article-avatar">{(a.author || '?').charAt(0).toUpperCase()}</div>
                                 <div className="dash-article-meta">
-                                  <div className="dash-article-author"><Link to={"/profile/" + a.authorKey} style={{color:"inherit",textDecoration:"none"}} onClick={e=>e.stopPropagation()}>{a.author}</Link> {isMine && <span className="dash-article-mine">вы</span>}</div>
+                                  <div className="dash-article-author"><Link to={"/profile/" + a.authorKey} style={{color:"inherit",textDecoration:"none"}} onClick={e=>e.stopPropagation()}><AdminName name={a.author} authKey={a.authorKey} /></Link> {isMine && <span className="dash-article-mine">вы</span>}</div>
                                   <div className="dash-article-date">{fmtArticleDate(a.createdAt)}</div>
                                 </div>
                                 {a.category && <span className="dash-article-cat-badge"><CategoryIcon name={categoryIcon(normalizeCategory(a.category))} size={12} /> {categoryName(normalizeCategory(a.category))}</span>}
@@ -1785,7 +1787,7 @@ setCommentDrafts(d => ({ ...d, [articleId]: '' }))
                   <Link key={u.authKey} to={'/profile/' + u.authKey} className="dash-user-search-row" style={{ textDecoration: 'none', color: 'inherit' }}>
                     <div className="dash-user-search-avatar">{u.avatar ? <img src={u.avatar} alt={u.name} style={{ width: '100%', height: '100%', borderRadius: '50%', objectFit: 'cover' }} /> : (u.name || '?').charAt(0).toUpperCase()}</div>
                     <div className="dash-user-search-info">
-                      <div className="dash-user-search-name">{u.name}</div>
+                      <div className="dash-user-search-name"><AdminName name={u.name} role={u.role} /></div>
                       {u.telegram && <div className="dash-user-search-tg">@{u.telegram}</div>}
                     </div>
                     <span className={'user-status-dot ' + (u.online ? 'online' : 'offline')} title={u.online ? 'Онлайн' : 'Офлайн'}></span>

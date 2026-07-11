@@ -6,6 +6,7 @@ import { getReports, addReport, genReportId, getDashData, addDashReport } from '
 import '../styles/target.css'
 import { useDocumentTitle } from '../hooks/useDocumentTitle.js'
 import { asset } from '../utils/assets.js'
+import AdminName from '../components/AdminName.jsx'
 
 // ── Severity helpers ──
 const SEVS = ['Critical', 'High', 'Medium', 'Low']
@@ -304,7 +305,7 @@ export default function TargetPage() {
             <div className="tgt-user-card">
               <div className="tgt-avatar">{displayName.charAt(0).toUpperCase()}</div>
               <div className="tgt-user-info">
-                <div className="tgt-user-name">{displayName}</div>
+                <div className="tgt-user-name"><AdminName name={displayName} role={user?.role} /></div>
                 <div className="tgt-user-rank">{userRank}</div>
               </div>
               <Link to="/login" onClick={(e) => { e.preventDefault(); logout(); navigate('/login') }} style={{ padding: '6px', borderRadius: '8px', border: 'none', background: 'none', color: 'var(--ink-3)', cursor: 'pointer', textDecoration: 'none' }} title="Выйти">
