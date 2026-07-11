@@ -111,7 +111,8 @@ export default function HomePage() {
     if (typeof customElements !== 'undefined' && customElements.get('model-viewer')) return
     const s = document.createElement('script')
     s.type = 'module'
-    s.textContent = "import { ModelViewerElement } from '/vendor/model-viewer.min.js'; ModelViewerElement.meshoptDecoderLocation = '/vendor/meshopt_decoder.js'; if (!customElements.get('model-viewer')) customElements.define('model-viewer', ModelViewerElement);"
+    const base = import.meta.env.BASE_URL
+    s.textContent = `import { ModelViewerElement } from '${base}vendor/model-viewer.min.js'; ModelViewerElement.meshoptDecoderLocation = '${base}vendor/meshopt_decoder.js'; if (!customElements.get('model-viewer')) customElements.define('model-viewer', ModelViewerElement);`
     document.head.appendChild(s)
     return () => { s.remove() }
   }, [])
