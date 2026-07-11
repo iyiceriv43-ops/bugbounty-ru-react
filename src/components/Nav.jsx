@@ -23,32 +23,32 @@ export default function Nav({ scrolled = false, onBusinessModal }) {
           <span>HackPark</span>
         </Link>
           <div className="nav-links">
-            <a href="/#programs">Программы</a>
-          <a href="/#leaders">Лидерборд</a>
-          <a href="/#how">Как это работает</a>
-          <a href="/#faq">FAQ</a>
-          <Link to="/about">HackPark</Link>
-        </div>
-        <div className="nav-actions">
-          <Link to="/login" className="btn btn-ghost">Вход</Link>
-          <Link to="/register" className="btn btn-primary">Регистрация</Link>
-          <button className="btn btn-accent" onClick={() => onBusinessModal?.()}>Добавить бизнес</button>
-        </div>
-          <button className={`nav-menu-btn ${mobileOpen ? 'open' : ''}`} id="menuBtn" aria-label="Меню" aria-expanded={mobileOpen} onClick={() => setMobileOpen(!mobileOpen)}>
-            <span></span><span></span>
-          </button>
-        </div>
-        <div className={`mobile-menu ${mobileOpen ? 'open' : ''}`} id="mobileMenu">
-            <a href="/#programs" onClick={() => setMobileOpen(false)}>Программы</a>
-          <a href="/#leaders" onClick={() => setMobileOpen(false)}>Лидерборд</a>
-          <a href="/#how" onClick={() => setMobileOpen(false)}>Как это работает</a>
-          <a href="/#faq" onClick={() => setMobileOpen(false)}>FAQ</a>
-          <Link to="/about" onClick={() => setMobileOpen(false)}>HackPark</Link>
-          <div className="mobile-menu-actions">
-            <Link to="/register" className="btn btn-primary" onClick={() => setMobileOpen(false)}>Регистрация</Link>
-            <button className="btn btn-accent" onClick={() => { setMobileOpen(false); onBusinessModal?.() }}>Добавить бизнес</button>
+            <Link to="/#programs">Программы</Link>
+            <Link to="/#leaders">Лидерборд</Link>
+            <Link to="/#how">Как это работает</Link>
+            <Link to="/#faq">FAQ</Link>
+            <Link to="/about">HackPark</Link>
           </div>
+          <div className="nav-actions">
+            <Link to="/login" className="btn btn-ghost">Вход</Link>
+            <Link to="/register" className="btn btn-primary">Регистрация</Link>
+            <button className="btn btn-accent" onClick={() => onBusinessModal?.()}>Добавить бизнес</button>
           </div>
-      </nav>
+            <button className={`nav-menu-btn ${mobileOpen ? 'open' : ''}`} id="menuBtn" aria-label="Меню" aria-expanded={mobileOpen} onClick={() => setMobileOpen(!mobileOpen)}>
+              <span></span><span></span>
+            </button>
+          </div>
+          <div className={`mobile-menu ${mobileOpen ? 'open' : ''}`} id="mobileMenu">
+              <Link to="/#programs" onClick={() => setMobileOpen(false)}>Программы</Link>
+            <Link to="/#leaders" onClick={() => setMobileOpen(false)}>Лидерборд</Link>
+            <Link to="/#how" onClick={() => setMobileOpen(false)}>Как это работает</Link>
+            <Link to="/#faq" onClick={() => setMobileOpen(false)}>FAQ</Link>
+            <Link to="/about" onClick={() => setMobileOpen(false)}>HackPark</Link>
+            <div className="mobile-menu-actions">
+              <Link to="/register" className="btn btn-primary" onClick={() => setMobileOpen(false)}>Регистрация</Link>
+              <button className="btn btn-accent" onClick={() => { setMobileOpen(false); onBusinessModal?.() }}>Добавить бизнес</button>
+            </div>
+            </div>
+        </nav>
   )
 }
