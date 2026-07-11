@@ -449,33 +449,35 @@ export default function HomePage() {
           </h1>
           <p className="hero-sub reveal">Bug Bounty платформа от HackPark. 500+ исследователей безопасности тестируют ваши системы 24/7. Платите только за подтверждённые уязвимости.</p>
           <div className="hero-targets reveal">
-            <div className="hero-target-card" id="targetPentester" ref={secHeroCardP} onMouseMove={tiltMouseMove} onMouseEnter={tiltMouseEnter} onMouseLeave={tiltMouseLeave}>
-              <div className="hero-target-icon">
-                <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
-                  <path d="M8 2L4 6L2 4L4 2L8 2M16 2L20 6L22 4L20 2L16 2M4 6L6 8L4 10M8 6L6 8M12 12L8 8L12 4L16 8L12 12M12 12L14 14L12 16M12 16L10 14M12 12L10 14M12 16L14 18L12 20L10 18L12 16M18 22L22 18L20 16M14 18L16 20L14 22M18 22L16 22M14 22L12 22M20 18L22 16M18 18L16 16M4 14L6 12M6 12L8 14M4 16L6 18M6 18L8 16" />
-                </svg>
+              <div className="hero-target-card" id="targetPentester" ref={secHeroCardP} onMouseMove={tiltMouseMove} onMouseEnter={tiltMouseEnter} onMouseLeave={tiltMouseLeave}>
+                <div className="hero-target-icon hero-target-icon--shield">
+                  <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M12 2.5l8 3v5.5c0 4.5-3 8.5-8 10.5-5-2-8-6-8-10.5V5.5l8-3z"/>
+                    <path d="M8.5 12l2 2 4.5-4.8"/>
+                  </svg>
+                </div>
+                <div className="hero-target-text">
+                  <h3>Я Pentester</h3>
+                  <p>Ищи баги · награды до <strong>500&nbsp;000&nbsp;₽</strong></p>
+                </div>
+                <a href="#" className="btn btn-primary btn-med" data-auth="1" onClick={handleAuth}>Участвовать →</a>
               </div>
-              <div className="hero-target-text">
-                <h3>Я Pentester</h3>
-                <p>Ищи баги · Получай награды до <strong>500 000 ₽</strong></p>
+              <div className="hero-target-card hero-target-business" id="targetBusiness" ref={secHeroCardP2} onMouseMove={tiltMouseMove} onMouseEnter={tiltMouseEnter} onMouseLeave={tiltMouseLeave}>
+                <div className="hero-target-icon hero-target-icon--bag">
+                  <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round">
+                    <rect x="3" y="7" width="18" height="13" rx="2.5"/>
+                    <path d="M3 10h18M9 7V5a3 3 0 0 1 6 0v2"/>
+                  </svg>
+                </div>
+                <div className="hero-target-text">
+                  <h3>Я Бизнес</h3>
+                  <p>Запусти программу · <strong>400+</strong> компаний</p>
+                </div>
+                <a href="#" className="btn btn-accent btn-med" onClick={(e) => { e.preventDefault(); setBusinessModal(true) }}>Добавить бизнес →</a>
               </div>
-              <a href="#" className="btn btn-primary btn-med" data-auth="1" onClick={handleAuth}>Участвовать →</a>
-            </div>
-            <div className="hero-target-card hero-target-business" id="targetBusiness" ref={secHeroCardP2} onMouseMove={tiltMouseMove} onMouseEnter={tiltMouseEnter} onMouseLeave={tiltMouseLeave}>
-              <div className="hero-target-icon">
-                <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
-                  <path d="M3 21h18M5 21V7l8-4 8 4v14M9 21v-4h6v4M9 11h.01M15 11h.01M9 7h.01M15 7h.01M12 13v.01M12 17v.01" />
-                </svg>
-              </div>
-              <div className="hero-target-text">
-                <h3>Я Бизнес</h3>
-                <p>Запусти программу · 400+ компаний уже с нами</p>
-              </div>
-              <a href="#" className="btn btn-accent btn-med" onClick={(e) => { e.preventDefault(); setBusinessModal(true) }}>Добавить бизнес →</a>
-            </div>
           </div>
         </div>
-        <div className="hero-scroll reveal">
+        <div className="hero-scroll">
           <span>Прокрутите вниз</span>
           <div className="scroll-line"></div>
         </div>
@@ -531,7 +533,7 @@ export default function HomePage() {
         <div className="business-inner reveal">
           <div className="business-text">
             <span className="section-tag">Для бизнеса</span>
-            <h2 className="section-title">Защитите свой бизнес<br />до того, как это<br />сделают злоумышленники.</h2>
+            <h2 className="section-title">Защитите свой бизнес<br />до того, как его<br />взломают злоумышленники.</h2>
             <p>Запустите bug bounty программу — тысячи исследователей проверят ваши системы. Платите только за реальные уязвимости, а не за часы работы.</p>
             <ul className="business-benefits">
               <li><span className="check">✓</span> Вы сами назначаете цену</li>

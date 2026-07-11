@@ -34,12 +34,11 @@ export default function Nav({ scrolled = false, onBusinessModal }) {
           <Link to="/register" className="btn btn-primary">Регистрация</Link>
           <button className="btn btn-accent" onClick={() => onBusinessModal?.()}>Добавить бизнес</button>
         </div>
-        <button className="nav-menu-btn" id="menuBtn" aria-label="Меню" onClick={() => setMobileOpen(!mobileOpen)}>
-          <span></span><span></span>
-        </button>
-      </div>
-      {mobileOpen && (
-          <div className="mobile-menu" id="mobileMenu">
+          <button className={`nav-menu-btn ${mobileOpen ? 'open' : ''}`} id="menuBtn" aria-label="Меню" aria-expanded={mobileOpen} onClick={() => setMobileOpen(!mobileOpen)}>
+            <span></span><span></span>
+          </button>
+        </div>
+        <div className={`mobile-menu ${mobileOpen ? 'open' : ''}`} id="mobileMenu">
             <a href="/#programs" onClick={() => setMobileOpen(false)}>Программы</a>
           <a href="/#leaders" onClick={() => setMobileOpen(false)}>Лидерборд</a>
           <a href="/#how" onClick={() => setMobileOpen(false)}>Как это работает</a>
@@ -49,8 +48,7 @@ export default function Nav({ scrolled = false, onBusinessModal }) {
             <Link to="/register" className="btn btn-primary" onClick={() => setMobileOpen(false)}>Регистрация</Link>
             <button className="btn btn-accent" onClick={() => { setMobileOpen(false); onBusinessModal?.() }}>Добавить бизнес</button>
           </div>
-        </div>
-      )}
-    </nav>
+          </div>
+      </nav>
   )
 }

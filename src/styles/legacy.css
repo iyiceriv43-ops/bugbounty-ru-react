@@ -47,7 +47,7 @@ button{font:inherit;cursor:pointer;border:none;background:none;color:inherit}
 .nav-actions .btn-ghost{font-size:13px;padding:7px 14px}
 .nav-actions .btn-primary{font-size:13px;padding:7px 16px}
 .nav-actions .btn-accent{font-size:13px;padding:7px 16px}
-.nav-menu-btn{display:none;width:30px;height:30px;flex-direction:column;justify-content:center;gap:5px}
+.nav-menu-btn{display:none;width:30px;height:30px;flex-direction:column;justify-content:center;gap:5px;margin-left:auto}
 .nav-menu-btn span{width:20px;height:1.5px;background:var(--ink);transition:.3s var(--ease);margin:0 auto}
 .nav-menu-btn.open span:nth-child(1){transform:translateY(6.5px) rotate(45deg)}
 .nav-menu-btn.open span:nth-child(2){transform:translateY(-6.5px) rotate(-45deg)}
@@ -76,11 +76,12 @@ button{font:inherit;cursor:pointer;border:none;background:none;color:inherit}
 .hero-target-business:hover{border-color:var(--accent3);background:rgba(255,159,10,.06)}
 .hero-target-icon{width:48px;height:48px;border-radius:12px;display:flex;align-items:center;justify-content:center;background:rgba(94,92,224,.12);color:var(--g1);flex-shrink:0}
 .hero-target-business .hero-target-icon{background:rgba(255,159,10,.12);color:var(--accent3)}
-.hero-target-text{flex:1}
-.hero-target-text h3{font-size:17px;font-weight:600;margin-bottom:4px}
-.hero-target-text p{font-size:14px;color:var(--ink-2)}
-.hero-target-text p strong{color:var(--ink)}
-.hero-scroll{position:absolute;bottom:32px;left:50%;transform:translateX(-50%);z-index:2;color:var(--ink-3);font-size:12px;text-align:center}
+ .hero-target-text{flex:1 1 0;min-width:0}
+ .hero-target-text h3{font-size:17px;font-weight:600;margin-bottom:4px}
+ .hero-target-text p{font-size:14px;color:var(--ink-2);white-space:normal;overflow-wrap:anywhere}
+ .hero-target-text p strong{color:var(--ink);white-space:nowrap}
+ .hero-target-card .btn{flex-shrink:0;white-space:nowrap}
+.hero-scroll{position:absolute;bottom:32px;left:0;right:0;z-index:2;color:var(--ink-3);font-size:12px;text-align:center}
 .scroll-line{width:1px;height:40px;margin:8px auto 0;background:linear-gradient(to bottom,var(--ink-3),transparent);animation:scrollLine 2s var(--ease) infinite}
 @keyframes scrollLine{0%{transform:scaleY(0);transform-origin:top}50%{transform:scaleY(1);transform-origin:top}50.1%{transform-origin:bottom}100%{transform:scaleY(0);transform-origin:bottom}}
 
@@ -248,18 +249,20 @@ button{font:inherit;cursor:pointer;border:none;background:none;color:inherit}
 }
 @media(max-width:560px){
   .steps{grid-template-columns:1fr}
-  .hero-target-card{flex-direction:column;text-align:center}
-  .hero-target-card .btn{width:100%}
+ .hero-target-card{flex-direction:column;text-align:center;align-items:stretch}
+ .hero-target-card .btn{width:100%}
+ .hero-target-card .hero-target-icon{align-self:center}
+ .hero-target-card .hero-target-text{flex:0 0 auto}
   /* Tighter hero on small phones */
   .hero{min-height:88vh}
   .hero-content{padding:96px 16px 100px}
   .hero-title{font-size:clamp(34px,9vw,56px)}
   .hero-sub{font-size:15px;margin-bottom:32px}
-  .hero-target-card{padding:16px 18px;gap:12px}
-  .hero-target-icon{width:40px;height:40px;border-radius:10px}
-  .hero-target-icon svg{width:26px;height:26px}
-  .hero-target-text h3{font-size:16px}
-  .hero-target-text p{font-size:13px}
+ .hero-target-card{padding:16px 18px;gap:12px;max-width:100%}
+ .hero-target-icon{width:40px;height:40px;border-radius:10px}
+ .hero-target-icon svg{width:24px;height:24px}
+ .hero-target-text h3{font-size:16px}
+ .hero-target-text p{font-size:13px;line-height:1.4}
   /* Section spacing */
   .section-head{margin-bottom:32px}
   .section-title{font-size:clamp(26px,7vw,40px)}
