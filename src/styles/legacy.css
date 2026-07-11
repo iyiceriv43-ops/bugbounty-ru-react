@@ -746,4 +746,5 @@ button{font:inherit;cursor:pointer;border:none;background:none;color:inherit}
 .mario-2{animation:marioRun2 .16s steps(1,end) infinite}
 .boot-bar{width:200px;height:3px;background:rgba(255,255,255,.14);border-radius:999px;overflow:hidden}
 .boot-bar-fill{height:100%;background:#fff;border-radius:999px;transition:width .3s ease}
+.boot-label{margin:0;color:rgba(255,255,255,.6);font-size:13px;font-family:inherit;letter-spacing:.3px}
 @media(prefers-reduced-motion:reduce){.boot-fadeout{transition:none}}

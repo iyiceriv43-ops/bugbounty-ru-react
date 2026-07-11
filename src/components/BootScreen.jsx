@@ -50,9 +50,10 @@ export default function BootScreen({ progress = 0, fading = false }) {
         <Mario frame={1} className="mario-1" />
         <Mario frame={2} className="mario-2" />
       </div>
-      <div className="boot-bar">
-        <div className="boot-bar-fill" style={{ width: `${pct}%` }} />
+<div className="boot-bar">
+          <div className="boot-bar-fill" style={{ width: `${pct}%` }} />
+        </div>
+        <p className="boot-label">Пожалуйста, подождите…</p>
       </div>
-    </div>
   )
 }
