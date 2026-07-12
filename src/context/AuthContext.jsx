@@ -2,6 +2,7 @@ import { createContext, useContext, useState, useCallback, useEffect } from 'rea
 
 import { getReports, saveReports, getArticles, saveArticles, saveProfileSettings } from '../data/store.js'
 import { CATEGORIES } from '../data/categories.js'
+import { apiLogin, apiRegister, apiMe, getToken, clearToken, getStoredUser, setStoredUser } from '../utils/api.js'
 
 export const AuthContext = createContext(null)
 
@@ -19,7 +20,7 @@ export function genAuthKey() {
   return `HP-${part()}-${part()}`
 }
 
-// ── Users ──
+// ── Users (localStorage demo data, not auth) ──
 export function getUsers() {
   return JSON.parse(localStorage.getItem('hackpark_users') || '[]')
 }
@@ -28,7 +29,7 @@ export function saveUsers(users) {
   localStorage.setItem('hackpark_users', JSON.stringify(users))
 }
 
-// ── Admin user seeding ──
+// ── Admin user seeding (demo data only — not auth) ──
 export const ADMIN_USER_KEY = 'HP-ADMIN-0001'
 
 function seedAdminUser() {
@@ -230,22 +231,27 @@ function seedDemoData() {
     const likes = []
     for (let l = 0; l < numLikes; l++) likes.push('HP-RND-' + (1000 + rngInt(15)))
     const comments = []
-    if (rng() > 0.4) {
-      const cidx = rngInt(15)
+    const numC = rngInt(4)
+    for (let c = 0; c < numC; c++) {
+      const ci = rngInt(researchers.length)
       comments.push({
-        id: 'c-' + i + '-' + (1000 + rngInt(8999)),
-        author: researchers[cidx].telegram,
-        authorKey: 'HP-RND-' + (1000 + cidx),
-        text: rngPick(['Great article!','Thanks for the guide, very useful.','I had a similar experience.','Interesting approach!','Bookmarked.','Confirmed, method works.']),
-        createdAt: new Date(baseTs - (1 + rngInt(30)) * dayMs).toISOString(),
+        author: researchers[ci].name,
+        authorKey: 'HP-RND-' + (1000 + ci),
+        text: rngPick(['Great writeup, thanks!', 'Have you tried this against a wildcard cert?', 'I reproduced this on my lab, confirmed.', 'Nice find. Did you report via the official channel?']),
+        ts: new Date(baseTs - rngInt(30) * dayMs).toISOString(),
       })
     }
     newArticles.push({
-      id: 'art-seed-' + i + '-' + (1000 + rngInt(8999)),
-      title: tmpl.title, body: tmpl.body, category: tmpl.cat,
-      author: researchers[idx].telegram, authorKey,
-      createdAt: new Date(baseTs - (1 + rngInt(40)) * dayMs).toISOString(),
-      likes, comments,
+      id: 'art-' + (i + 1),
+      title: tmpl.title,
+      category: tmpl.cat,
+      body: tmpl.body,
+      authorKey,
+      authorName: researchers[idx].telegram,
+      ts: new Date(baseTs - (5 + rngInt(60)) * dayMs).toISOString(),
+      views: 50 + rngInt(500),
+      likes,
+      comments,
     })
   }
   const existingArticles = getArticles()
@@ -254,88 +260,101 @@ function seedDemoData() {
   localStorage.setItem(SEED_FLAG, '1')
 }
 
-export const AuthProvider = ({ children }) => {
+// ── Map backend UserOut to frontend user object ──
+function mapUser(u) {
+  if (!u) return null
+  return {
+    authKey: u.auth_key,
+    name: u.name,
+    user: u.name, // alias for backward compat (existing code uses user.user || user.name)
+    email: u.email,
+    telegram: u.telegram || '',
+    phone: u.phone || '',
+    status: u.status || 'pending',
+    role: u.role || 'user',
+    reward: u.reward || 0,
+    bonusPoints: u.bonus_points || 0,
+    submittedAt: u.submitted_at,
+    approvedAt: u.approved_at,
+    loginAt: u.login_at,
+  }
+}
+
+// ── Provider ─────────────────────────────────────────
+export function AuthProvider({ children }) {
   const [user, setUser] = useState(null)
   const [loading, setLoading] = useState(true)
 
+  // On mount: if we have a stored JWT, validate it via /api/auth/me
   useEffect(() => {
+    const token = getToken()
+    const stored = getStoredUser()
+    // Optimistically set the stored user so UI can render immediately
+    if (stored) setUser(mapUser(stored))
+
+    if (!token) {
+      setLoading(false)
+      // Seed demo data (only for non-authenticated browsing)
+      seedAdminUser()
+      seedDemoData()
+      return
+    }
+
+    // Validate the token against the backend
+    apiMe()
+      .then((data) => {
+        const mapped = mapUser(data)
+        setUser(mapped)
+        setStoredUser(data)
+      })
+      .catch(() => {
+        // Token is invalid/expired — clear it
+        clearToken()
+        setUser(null)
+      })
+      .finally(() => {
+        setLoading(false)
+        seedAdminUser()
+        seedDemoData()
+      })
+  }, [])
+
+  // login(email, password, authKey) — calls backend /api/auth/login
+  const login = useCallback(async (email, password, authKey) => {
     try {
-      // Read from cookie (persistent session)
-      const m = document.cookie.match(/(?:^|; )hackpark_auth=([^;]+)/)
-      if (m) {
-        const session = JSON.parse(decodeURIComponent(m[1]))
-        // Update loginAt to now so user appears online on page reload
-        const users = getUsers()
-        const found = users.find(u => u.authKey === session.authKey)
-        if (found) {
-          found.loginAt = new Date().toISOString()
-          saveUsers(users)
-          session.loginAt = found.loginAt
-        }
-        setUser(session)
+      const u = await apiLogin(email, password, authKey)
+      if (u.status === 'pending') {
+        return { ok: false, error: 'Ваша заявка ещё на рассмотрении администратора. Мы сообщим, когда аккаунт будет активирован.' }
       }
-    } catch {}
-    // Seed admin user on first load
-    seedAdminUser()
-    seedDemoData()
-    setLoading(false)
+      if (u.status === 'banned') {
+        return { ok: false, error: 'Ваш аккаунт заблокирован. Свяжитесь с администратором HackPark в Telegram.' }
+      }
+      setUser(mapUser(u))
+      return { ok: true }
+    } catch (e) {
+      return { ok: false, error: e.detail || 'Неверный email, пароль или ключ.' }
+    }
   }, [])
 
-  const login = useCallback((authKey) => {
-    const users = getUsers()
-    const found = users.find(u => u.authKey === authKey)
-    if (!found) return { ok: false, error: 'Неверный код участника. Проверьте ключ или обратитесь к администратору.' }
-    if (found.status === 'pending') return { ok: false, error: 'Ваша заявка ещё на рассмотрении администратора. Мы сообщим, когда аккаунт будет активирован.' }
-    if (found.status === 'banned') return { ok: false, error: 'Ваш аккаунт заблокирован. Свяжитесь с администратором HackPark в Telegram.' }
-
-    // Update last login time on the stored user record for online detection
-    found.loginAt = new Date().toISOString()
-    saveUsers(users)
-
-    const session = {
-      user: found.name,
-      email: found.email,
-      authKey: found.authKey,
-      role: found.role || 'user',
-      joined: found.submittedAt,
-      loginAt: found.loginAt
+  // register(data) — calls backend /api/auth/register
+  // Returns { ok: true } — the auth_key is NOT revealed; admin sends it via Telegram
+  const register = useCallback(async (data) => {
+    try {
+      await apiRegister({
+        name: data.name,
+        phone: data.phone || '',
+        email: data.email,
+        telegram: data.telegram || '',
+        password: data.password,
+      })
+      return { ok: true }
+    } catch (e) {
+      return { ok: false, error: e.detail || 'Ошибка регистрации.' }
     }
-    const expires = new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toUTCString()
-    document.cookie = `hackpark_auth=${encodeURIComponent(JSON.stringify(session))}; expires=${expires}; path=/; SameSite=Lax`
-    setUser(session)
-
-    // Sync admin-awarded rewards to dash data
-    const dashData = JSON.parse(localStorage.getItem('hackpark_dash_data') || '{}')
-    if (found.reward > 0) dashData.bonusEarnings = found.reward
-    if (found.bonusPoints > 0) dashData.bonusPoints = found.bonusPoints
-    localStorage.setItem('hackpark_dash_data', JSON.stringify(dashData))
-
-    return { ok: true }
-  }, [])
-
-  const register = useCallback((data) => {
-    const users = getUsers()
-    // Check dup email
-    if (users.find(u => u.email === data.email)) {
-      return { ok: false, error: 'Пользователь с таким email уже зарегистрирован.' }
-    }
-    const authKey = genAuthKey()
-    const newUser = {
-      ...data,
-      status: 'pending',
-      authKey,
-      reward: 0,
-      bonusPoints: 0,
-      submittedAt: new Date().toISOString()
-    }
-    users.push(newUser)
-    saveUsers(users)
-    localStorage.setItem('hackpark_pending_registration', JSON.stringify(newUser))
-    return { ok: true, authKey }
   }, [])
 
   const logout = useCallback(() => {
-    document.cookie = 'hackpark_auth=; expires=Thu, 01 Jan 1970 00:00:00 GMT; path=/'
+    clearToken()
     setUser(null)
   }, [])
 

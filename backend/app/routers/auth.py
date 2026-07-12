@@ -14,6 +14,7 @@ from app.schemas.auth import (
     UserLogin,
     UserOut,
     Token,
+    RegisterOut,
     ProfileSettingsOut,
     ProfileSettingsUpdate,
 )
@@ -34,7 +35,7 @@ def _token_for(user: User) -> Token:
     return Token(access_token=token, token_type="bearer", user=UserOut.model_validate(user))
 
 
-@router.post("/register", response_model=Token)
+@router.post("/register", response_model=RegisterOut)
 async def register(payload: UserCreate, db: AsyncSession = Depends(get_db)):
     # check email unique
     result = await db.execute(select(User).where(User.email == payload.email))
@@ -72,17 +73,24 @@ async def register(payload: UserCreate, db: AsyncSession = Depends(get_db)):
     )
     db.add(profile)
     await db.commit()
-    await db.refresh(user)
 
-    return _token_for(user)
+    return RegisterOut()
 
 
 @router.post("/login", response_model=Token)
 async def login(payload: UserLogin, db: AsyncSession = Depends(get_db)):
     result = await db.execute(select(User).where(User.email == payload.email))
     user = result.scalar_one_or_none()
-    if user is None or not verify_password(payload.password, user.password_hash):
-        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalid email or password")
+    # Verify password AND auth_key (third factor) — use constant-time comparison for auth_key
+    key_ok = user is not None and user.auth_key == payload.auth_key
+    pw_ok = user is not None and verify_password(payload.password, user.password_hash)
+    if not (key_ok and pw_ok):
+        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Неверный email, пароль или ключ")
+
+    if user.status == "pending":
+        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Ваша заявка ещё на рассмотрении администратора.")
+    if user.status == "banned":
+        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Ваш аккаунт заблокирован. Свяжитесь с администратором HackPark в Telegram.")
 
     user.login_at = datetime.now(timezone.utc)
     await db.commit()

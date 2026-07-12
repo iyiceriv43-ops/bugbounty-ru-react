@@ -95,7 +95,7 @@ export default function RegisterPage() {
   const [showPasswordConfirm, setShowPasswordConfirm] = useState(false)
 
   const [registered, setRegistered] = useState(false)
-  const [authKey, setAuthKey] = useState('')
+  const [submitting, setSubmitting] = useState(false)
 
   const setFieldError = (field, msg) =>
     setErrors((prev) => ({ ...prev, [field]: msg }))
@@ -138,7 +138,7 @@ export default function RegisterPage() {
 
   const passwordScoreVal = passwordScore(form.password)
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault()
     setErrors({})
     setFormError('')
@@ -239,21 +239,23 @@ export default function RegisterPage() {
 
     if (!valid) return
 
-    const result = register({
-      name: form.name,
-      phone: form.phone,
-      email: form.email,
-      telegram: form.telegram,
-      password: form.password,
-    })
+      setSubmitting(true)
+      setFormError('')
+      const result = await register({
+        name: form.name,
+        phone: form.phone,
+        email: form.email,
+        telegram: form.telegram,
+        password: form.password,
+      })
+      setSubmitting(false)
 
-    if (!result.ok) {
-      setFormError(result.error || 'Ошибка регистрации')
-      return
-    }
+      if (!result.ok) {
+        setFormError(result.error || 'Ошибка регистрации')
+        return
+      }
 
-    setAuthKey(result.authKey)
-    setRegistered(true)
+      setRegistered(true)
   }
 
   return (
@@ -345,8 +347,10 @@ export default function RegisterPage() {
               </label>
               <span className="field-error">{errors.consent || ''}</span>
 
-              <span className="form-error">{formError || ''}</span>
-              <button type="submit" className="btn btn-primary btn-lg btn-full">Отправить заявку →</button>
+            <span className="form-error">{formError || ''}</span>
+            <button type="submit" className="btn btn-primary btn-lg btn-full" disabled={submitting}>
+              {submitting ? 'Отправка…' : 'Отправить заявку →'}
+            </button>
             </form>
           )}
 
@@ -369,10 +373,10 @@ export default function RegisterPage() {
                 <span className="status-badge status-pending">Ожидает подтверждения</span>
               </div>
 
-              <div className="auth-note">
-                <span className="auth-note-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><rect x="8" y="2" width="8" height="4" rx="1"/><path d="M9 14l2 2 4-4"/></svg></span>
-                <p>Регистрация подтверждается вручную. После подтверждения администратор отправит вам ключ участника в Telegram в течение 1–2 рабочих дней. Используйте полученный ключ для входа на платформу.</p>
-              </div>
+                <div className="auth-note">
+                  <span className="auth-note-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><rect x="8" y="2" width="8" height="4" rx="1"/><path d="M9 14l2 2 4-4"/></svg></span>
+                  <p>Регистрация подтверждается вручную. После одобрения администратор отправит вам <strong>ключ участника</strong> в Telegram. Используйте email, пароль и полученный ключ для входа на платформу.</p>
+                </div>
 
               <Link to="/" className="btn btn-ghost btn-lg btn-full">Вернуться на главную</Link>
             </div>

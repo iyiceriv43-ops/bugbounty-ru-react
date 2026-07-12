@@ -12,34 +12,36 @@ export default function LoginPage() {
   const { login } = useAuth()
 
   const [form, setForm] = useState({
-    loginContact: '',
-    loginPassword: '',
-    loginCode: '',
+    email: '',
+    password: '',
+    authKey: '',
     rememberMe: false,
   })
   const [error, setError] = useState('')
-  const [errors, setErrors] = useState({})
   const [showPassword, setShowPassword] = useState(false)
+  const [loading, setLoading] = useState(false)
 
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target
     setForm((prev) => ({ ...prev, [name]: type === 'checkbox' ? checked : value }))
   }
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault()
 
-    // Redirect target from URL query
     const params = new URLSearchParams(window.location.search)
     const redirect = params.get('redirect')
 
-    const result = login(form.loginCode.trim())
+    setLoading(true)
+    setError('')
+    const result = await login(form.email.trim(), form.password, form.authKey.trim())
+    setLoading(false)
+
     if (!result.ok) {
       setError(result.error)
       return
     }
 
-    setError('')
     navigate(redirect || '/dashboard')
   }
 
@@ -62,27 +64,24 @@ export default function LoginPage() {
 
           <form className="auth-form" noValidate onSubmit={handleSubmit}>
             <div className="form-field">
-              <label htmlFor="loginContact">Телефон или email</label>
-              <input type="text" id="loginContact" name="loginContact" placeholder="+7 (XXX) XXX-XX-XX или email" autoComplete="username" value={form.loginContact} onChange={handleChange}/>
-              <span className="field-error" data-for="loginContact"></span>
+              <label htmlFor="email">Email</label>
+              <input type="email" id="email" name="email" placeholder="ivan@yandex.ru" autoComplete="username" value={form.email} onChange={handleChange}/>
             </div>
 
             <div className="form-field">
-              <label htmlFor="loginPassword">Пароль</label>
+              <label htmlFor="password">Пароль</label>
               <div className="password-wrap">
-                <input type={showPassword ? 'text' : 'password'} id="loginPassword" name="loginPassword" placeholder="••••••••" autoComplete="current-password" value={form.loginPassword} onChange={handleChange}/>
+                <input type={showPassword ? 'text' : 'password'} id="password" name="password" placeholder="••••••••" autoComplete="current-password" value={form.password} onChange={handleChange}/>
                 <button type="button" className="password-toggle" aria-label="Показать пароль" onClick={() => setShowPassword(!showPassword)}>
                   <svg className="pw-icon-show" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
                 </button>
               </div>
-              <span className="field-error" data-for="loginPassword"></span>
             </div>
 
             <div className="form-field">
-              <label htmlFor="loginCode">Код участника HackPark <span className="req">*</span></label>
-              <input type="text" id="loginCode" name="loginCode" placeholder="HP-XXXX-XXXX" autoComplete="off" maxLength={14} value={form.loginCode} onChange={handleChange}/>
-              <span className="field-hint">Ключ участника генерируется при регистрации и активируется администратором.</span>
-              <span className="field-error" data-for="loginCode"></span>
+              <label htmlFor="authKey">Ключ участника</label>
+              <input type="text" id="authKey" name="authKey" placeholder="HP-XXXX-XXXX" autoComplete="off" value={form.authKey} onChange={handleChange}/>
+              <span className="field-hint">Ключ выдаётся администратором через Telegram после одобрения заявки</span>
             </div>
 
             <div className="form-row-between">
@@ -96,7 +95,9 @@ export default function LoginPage() {
             </div>
 
             <span className="form-error" id="loginFormError">{error}</span>
-            <button type="submit" className="btn btn-primary btn-lg btn-full">Войти →</button>
+            <button type="submit" className="btn btn-primary btn-lg btn-full" disabled={loading}>
+              {loading ? 'Вход…' : 'Войти →'}
+            </button>
           </form>
 
           <div className="auth-divider"><span>или</span></div>
@@ -107,7 +108,7 @@ export default function LoginPage() {
             <span className="auth-note-icon">
               <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
             </span>
-            <p>Вход доступен только подтверждённым участникам HackPark. Введите ключ, полученный при регистрации. Если ваша заявка ещё на проверке — дождитесь подтверждения от администратора.</p>
+            <p>Вход доступен только подтверждённым участникам HackPark. Ключ участника высылается администратором в Telegram после одобрения заявки.</p>
           </div>
         </div>
       </main>

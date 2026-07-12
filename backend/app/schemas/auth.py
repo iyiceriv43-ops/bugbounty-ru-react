@@ -26,6 +26,11 @@ class UserCreate(BaseModel):
 class UserLogin(BaseModel):
     email: str
     password: str
+    auth_key: str
+
+
+class RegisterOut(BaseModel):
+    message: str = "Заявка отправлена. После одобрения администратор отправит вам ключ участника в Telegram."
 
 
 class UserOut(BaseModel):

@@ -1,8 +1,8 @@
 import { useState, useEffect, useRef, useCallback } from 'react'
-import { Link, useNavigate, Navigate } from 'react-router-dom'
-import { getAllPrograms, saveProgram, deleteProgram, savePrograms, resetPrograms, logoStyle } from '../data/programs.js'
-import { getReports, saveReports, getChats, saveChats, getRewardMap, saveRewardMap, getXPMap, saveXPMap, isAdminAuthed, adminLogin, adminLogout, ADMIN_PASSWORD, addNotification } from '../data/store.js'
-import { getUsers, saveUsers } from '../context/AuthContext.jsx'
+import { Link } from 'react-router-dom'
+import { getAllPrograms, saveProgram, deleteProgram, logoStyle } from '../data/programs.js'
+import { getReports, saveReports, addNotification } from '../data/store.js'
+import { getUsers, saveUsers, useAuth } from '../context/AuthContext.jsx'
 import { getProfileSettings } from '../data/store.js'
 import '../styles/admin.css'
 import { useDocumentTitle } from '../hooks/useDocumentTitle.js'
@@ -72,49 +72,6 @@ const Ico = {
   doc: () => (<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>),
 }
 
-// ── Login screen ────────────────────────────────────
-function LoginScreen({ onLogin }) {
-  const [pass, setPass] = useState('')
-  const [err, setErr] = useState('')
-  const inputRef = useRef(null)
-
-  useEffect(() => { if (inputRef.current) inputRef.current.focus() }, [])
-
-  const submit = (e) => {
-    e.preventDefault()
-    if (adminLogin(pass)) {
-      setErr('')
-      onLogin()
-    } else {
-      setErr('Неверный пароль')
-    }
-  }
-
-  return (
-    <div className="adm-login">
-      <div className="adm-login-box">
-        <div className="adm-login-logo">
-          <img src={asset("/images/hp-logo-sm.png")} alt="HackPark" />
-          <span>HackPark</span>
-          <span className="adm-tag">ADMIN</span>
-        </div>
-        <h1>Вход в админ-панель</h1>
-        <p>Доступ только для администраторов платформы</p>
-        <div className="adm-login-err">{err}</div>
-        <form onSubmit={submit}>
-          <div className="adm-field">
-            <label htmlFor="admPass">Пароль администратора</label>
-            <input type="password" id="admPass" ref={inputRef} autoFocus placeholder="Введите пароль"
-              value={pass} onChange={e => setPass(e.target.value)} />
-          </div>
-          <button type="submit" className="btn btn-primary btn-lg btn-full">Войти →</button>
-        </form>
-        <Link to="/" style={{ display: 'block', textAlign: 'center', marginTop: 16, fontSize: 13, color: 'var(--ink-3)', textDecoration: 'none' }}>← На главную</Link>
-      </div>
-    </div>
-  )
-}
-
 // ── Sidebar ─────────────────────────────────────────
 function Sidebar({ view, onNav, authed, sidebarOpen, onCloseSidebar, pendingUsers, pendingReports, pendingBizRequests }) {
   const navItems = [
@@ -146,19 +103,19 @@ function Sidebar({ view, onNav, authed, sidebarOpen, onCloseSidebar, pendingUser
           <Link to="/" className="adm-nav-item" onClick={onCloseSidebar}><Ico.home /> На главную</Link>
           <Link to="/dashboard" className="adm-nav-item" onClick={onCloseSidebar}><Ico.dash /> Дашборд</Link>
         </nav>
-        <div className="adm-sidebar-foot">
-          <div className="adm-user-card">
-            <div className="adm-avatar">A</div>
-            <div className="adm-user-info">
-              <div style={{ fontSize: 13, fontWeight: 600, color: 'var(--ink)' }}>Администратор</div>
-              <div style={{ fontSize: 11, color: 'var(--ink-3)' }}>admin@hackpark.ru</div>
+          <div className="adm-sidebar-foot">
+            <div className="adm-user-card">
+              <div className="adm-avatar">{(authed.user?.name || 'A').charAt(0).toUpperCase()}</div>
+              <div className="adm-user-info">
+                <div style={{ fontSize: 13, fontWeight: 600, color: 'var(--ink)' }}>{authed.user?.name || 'Администратор'}</div>
+                <div style={{ fontSize: 11, color: 'var(--ink-3)' }}>{authed.user?.email || 'admin@hackpark.ru'}</div>
+              </div>
+              <button onClick={authed.logout} title="Выйти"
+                style={{ padding: 6, borderRadius: 8, border: 'none', background: 'none', color: 'var(--ink-3)', cursor: 'pointer' }}>
+                <Ico.logout />
+              </button>
             </div>
-            <button onClick={authed.logout} title="Выйти"
-              style={{ padding: 6, borderRadius: 8, border: 'none', background: 'none', color: 'var(--ink-3)', cursor: 'pointer' }}>
-              <Ico.logout />
-            </button>
           </div>
-        </div>
       </aside>
     </>
   )
@@ -1241,8 +1198,8 @@ function BusinessRequestsView({ onToast }) {
 // ═══════════════════════════════════════════════════
 export default function AdminPage() {
   useDocumentTitle('Админка — HackPark')
-  const [authed, setAuthed] = useState(isAdminAuthed())
-  const [view, setView] = useState(() => { try { return localStorage.getItem('hackpark_admin_view') || 'list' } catch { return 'list' } })
+    const { user, logout } = useAuth()
+    const [view, setView] = useState(() => { try { return localStorage.getItem('hackpark_admin_view') || 'list' } catch { return 'list' } })
   const [editingSlug, setEditingSlug] = useState(null)
   const [sidebarOpen, setSidebarOpen] = useState(false)
   const [toast, setToast] = useState(null)
@@ -1257,15 +1214,13 @@ export default function AdminPage() {
   const pendingReports = reports.filter(r => r.status === 'triage' || !r.status).length
   const pendingBizRequests = (() => { try { return JSON.parse(localStorage.getItem('hackpark_business_requests') || '[]').filter(r => r.status === 'new').length } catch { return 0 } })()
 
-  const showToast = useCallback((msg, type) => setToast({ msg, type }), [])
+    const showToast = useCallback((msg, type) => setToast({ msg, type }), [])
 
-  const handleLogin = () => { setAuthed(true) }
-  const handleLogout = useCallback(() => {
-    adminLogout()
-    setAuthed(false)
-    setView('list')
-    showToast('Вы вышли', '')
-  }, [showToast])
+    const handleLogout = useCallback(() => {
+      logout()
+      setView('list')
+      showToast('Вы вышли', '')
+    }, [logout, showToast])
 
   const handleNav = (v) => {
     if (v === 'list') { setView('list'); setEditingSlug(null) }
@@ -1300,23 +1255,19 @@ export default function AdminPage() {
   }
   const [activeChatReportId, setActiveChatReportId] = useState(null)
 
-  if (!authed) {
-    return <LoginScreen onLogin={handleLogin} />
-  }
-
-  return (
-    <>
-      <div className="adm-body">
-        <Sidebar
-          view={view}
-          onNav={handleNav}
-          authed={{ logout: handleLogout }}
-          sidebarOpen={sidebarOpen}
-          onCloseSidebar={() => setSidebarOpen(false)}
-          pendingUsers={pendingUsers}
-          pendingReports={pendingReports}
-          pendingBizRequests={pendingBizRequests}
-        />
+    return (
+      <>
+        <div className="adm-body">
+          <Sidebar
+            view={view}
+            onNav={handleNav}
+            authed={{ logout: handleLogout, user }}
+            sidebarOpen={sidebarOpen}
+            onCloseSidebar={() => setSidebarOpen(false)}
+            pendingUsers={pendingUsers}
+            pendingReports={pendingReports}
+            pendingBizRequests={pendingBizRequests}
+          />
         <main className="adm-main">
           <button className="adm-mobile-toggle" onClick={() => setSidebarOpen(o => !o)}><span /></button>
 
