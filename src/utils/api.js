@@ -4,6 +4,10 @@
 const TOKEN_KEY = 'hackpark_jwt'
 const USER_KEY = 'hackpark_user'
 
+// In dev, Vite proxies /api → http://127.0.0.1:8000 (see vite.config.js).
+// In production (GitHub Pages), set VITE_API_URL to the backend's public URL.
+const API_BASE = import.meta.env.VITE_API_URL || ''
+
 export function getToken() {
   return localStorage.getItem(TOKEN_KEY)
 }
@@ -39,7 +43,7 @@ export async function api(path, { method = 'GET', body, auth = true } = {}) {
     const token = getToken()
     if (token) headers['Authorization'] = `Bearer ${token}`
   }
-  const res = await fetch(path, {
+    const res = await fetch(API_BASE + path, {
     method,
     headers,
     body: body ? JSON.stringify(body) : undefined,
